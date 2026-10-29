@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RouteWise — Intelligent Navigation</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">↗</div>
+            <div>
+                <h2>routewise<span>.</span></h2>
+                <small>INTELLIGENT NAVIGATION</small>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <p class="sidebar-label">WORKSPACE</p>
+
+            <div class="nav-item active">
+                <span>◈</span>
+                Route planner
+            </div>
+
+            <div class="nav-item muted">
+                <span>◎</span>
+                Route history
+                <small>Soon</small>
+            </div>
+        </div>
+
+        <div class="sidebar-bottom">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <div>
+                    <strong>Route engine</strong>
+                    <p id="systemStatus">Checking connection...</p>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                ROUTEWISE / RESEARCH PROTOTYPE
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <header class="topbar">
+            <div class="breadcrumb">
+                Workspace <span>/</span> Route planner
+            </div>
+
+            <div class="topbar-right">
+                <span class="location-tag">◉ Manhattan, NYC</span>
+                <span class="version-tag">BETA 01</span>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <div class="page-heading">
+                <div>
+                    <p class="eyebrow">YOUR JOURNEY, SIMPLIFIED</p>
+                    <h1>Find your way, <em>intelligently.</em></h1>
+                    <p class="description">
+                        Explore Manhattan's road network with data-driven
+                        travel-time estimates.
+                    </p>
+                </div>
+            </div>
+
+            <div class="workspace">
+
+                <!-- PLANNER PANEL -->
+                <section class="planner-panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">01 / PLAN</p>
+                            <h2>Plan a journey</h2>
+                        </div>
+                        <span class="panel-icon">↗</span>
+                    </div>
+
+                    <div class="form-area">
+
+                        <label for="source">STARTING POINT</label>
+                        <div class="location-field">
+                            <span class="location-dot start"></span>
+                            <select id="source">
+                                <option value="">Choose starting point</option>
+                                <option>Times Square</option>
+                                <option>Empire State Building</option>
+                                <option>Columbus Circle</option>
+                                <option>Central Park South</option>
+                                <option>Grand Central Terminal</option>
+                                <option>Union Square</option>
+                                <option>Wall Street</option>
+                            </select>
+                        </div>
+
+                        <div class="connector">
+                            <span></span>
+                            <button id="swapLocations" type="button" title="Swap locations">⇅</button>
+                        </div>
+
+                        <label for="destination">DESTINATION</label>
+                        <div class="location-field">
+                            <span class="location-dot end"></span>
+                            <select id="destination">
+                                <option value="">Choose destination</option>
+                                <option>Times Square</option>
+                                <option>Empire State Building</option>
+                                <option>Columbus Circle</option>
+                                <option>Central Park South</option>
+                                <option>Grand Central Terminal</option>
+                                <option>Union Square</option>
+                                <option>Wall Street</option>
+                            </select>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <label>ROUTING METHOD</label>
+
+                        <div class="preference active">
+                            <div class="preference-icon">↗</div>
+                            <div>
+                                <strong>Shortest distance</strong>
+                                <p>Road-network based routing</p>
+                            </div>
+                            <span class="selected-indicator">✓</span>
+                        </div>
+
+                        <div class="future-label">
+                            Additional routing preferences are under development.
+                        </div>
+
+                        <button id="findRoute" class="primary-button">
+                            Calculate route
+                            <span>→</span>
+                        </button>
+
+                        <p id="errorMessage" class="error-message"></p>
+
+                    </div>
+
+                    <div class="planner-footnote">
+                        <span>ⓘ</span>
+                        Currently available for selected locations in Manhattan.
+                    </div>
+
+                </section>
+
+                <!-- MAP PANEL -->
+                <section class="map-panel">
+
+                    <div class="map-topbar">
+                        <div>
+                            <p class="eyebrow">02 / EXPLORE</p>
+                            <h2>Route overview</h2>
+                        </div>
+                        <span class="map-live">
+                            <span></span>
+                            OPENSTREETMAP
+                        </span>
+                    </div>
+
+                    <div class="map-container">
+                        <div id="map"></div>
+
+                        <div class="map-overlay">
+                            <span class="overlay-dot"></span>
+                            MANHATTAN ROAD NETWORK
+                        </div>
+                    </div>
+
+                </section>
+
+            </div>
+
+            <!-- RESULTS -->
+            <section class="results-section" id="results">
+
+                <div class="results-heading">
+                    <div>
+                        <p class="eyebrow">03 / ANALYSIS</p>
+                        <h2>Your route, explained.</h2>
+                    </div>
+                    <span id="resultBadge" class="result-badge">AWAITING ROUTE</span>
+                </div>
+
+                <div class="results-grid">
+
+                    <div class="result-main">
+
+                        <p class="result-label">CALCULATED JOURNEY</p>
+
+                        <h3 id="routeText">
+                            Select your locations to begin
+                        </h3>
+
+                        <p id="routeDescription">
+                            Your route information will appear here after calculation.
+                        </p>
+
+                        <div class="route-endpoints">
+                            <div>
+                                <span class="endpoint-dot start"></span>
+                                <span id="sourceName">Starting point</span>
+                            </div>
+                            <div class="endpoint-line"></div>
+                            <div>
+                                <span class="endpoint-dot end"></span>
+                                <span id="destinationName">Destination</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="metric-card">
+                        <p>ROAD DISTANCE</p>
+                        <div>
+                            <strong id="distanceValue">—</strong>
+                            <span>km</span>
+                        </div>
+                        <small>Calculated from road network</small>
+                    </div>
+
+                    <div class="metric-card">
+                        <p>ESTIMATED TRAVEL TIME</p>
+                        <div>
+                            <strong id="timeValue">—</strong>
+                            <span>min</span>
+                        </div>
+                        <small>Experimental ML prediction</small>
+                    </div>
+
+                </div>
+
+                <div class="disclaimer">
+                    <span>ⓘ</span>
+                    <p>
+                        Travel-time estimates are experimental and use illustrative
+                        weather inputs. Live traffic, safety analysis, fuel optimization,
+                        and alternative-route ranking are not yet implemented.
+                    </p>
+                </div>
+
+            </section>
+
+            <footer class="footer">
+                <span>© 2026 RouteWise</span>
+                <span>Intelligent Route Recommendation System · Research Prototype</span>
+            </footer>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="./javascript/script.js"></script>
+
+</body>
+</html>
